@@ -1,4 +1,334 @@
 `timescale 1ns/10ps
+module WaveGenerator_tb();
+	reg Clk, I;
+	wire R, W;
+	
+	WaveGenerator WaveGenerator_1(Clk, I, R, W);
+	
+	initial
+	begin
+		Clk = 1'b0; I = 1'b1; 
+		// R = 0, 0, 0, 1, 0, 0, 0, 1, ...
+		// W = 0, 0, 1, 1, 0, 0, 1, 1, ...
+	end
+	
+	always
+	begin
+		Clk = ~Clk; #250;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module StateDiagram_2_tb();
+	reg clk;
+	reg in;
+	wire [1:0] out;
+	
+	StateDiagram_2 StateDiagram_2_1(clk, in, out);
+	
+	initial
+	begin
+		clk = 1'b0;
+		in = 1'b0; #250; // out = 2'b00;
+		in = 1'b1; #250; // out = 2'b01;
+		in = 1'b1; #250; // out = 2'b11;
+		in = 1'b1; #250; // out = 2'b00;
+		in = 1'b1; #250; // out = 2'b01;
+		in = 1'b0; #250; // out = 2'b10;
+		in = 1'b0; #250; // out = 2'b10;
+		in = 1'b1; #250; // out = 2'b11;
+		in = 1'b0; #250; // out = 2'b01;
+	end
+	
+	always
+	begin
+		clk = ~clk;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module StateDiagram_1_tb();
+	reg clk;
+	reg in;
+	wire [1:0] out;
+	
+	StateDiagram_1 StateDiagram_1_1(clk, in, out);
+	
+	initial
+	begin
+		clk = 1'b0;
+		in = 1'b0; #250; // out = 2'b00;
+		in = 1'b1; #250; // out = 2'b01;
+		in = 1'b1; #250; // out = 2'b11;
+		in = 1'b1; #250; // out = 2'b00;
+		in = 1'b1; #250; // out = 2'b01;
+		in = 1'b0; #250; // out = 2'b10;
+		in = 1'b0; #250; // out = 2'b10;
+		in = 1'b1; #250; // out = 2'b11;
+		in = 1'b0; #250; // out = 2'b01;
+	end
+	
+	always
+	begin
+		clk = ~clk;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module SequenceDetector101_tb();
+	reg clk, in;
+	wire out;
+	
+	SequenceDetector101 SequenceDetector101_1(clk, in, out);
+	
+	initial
+	begin
+		clk = 1'b0;
+		in = 1'b0; #250; // out = 0;
+		in = 1'b1; #250; // out = 0;
+		in = 1'b1; #250; // out = 0;
+		in = 1'b0; #250; // out = 0;
+		in = 1'b0; #250; // out = 0;
+		in = 1'b1; #250; // out = 0;
+		in = 1'b0; #250; // out = 0;
+		in = 1'b1; #250; // out = 1;
+		in = 1'b1; #250; // out = 0;
+		in = 1'b0; #250; // out = 0;
+		in = 1'b1; #250; // out = 1;
+		in = 1'b0; #250; // out = 0;
+	end
+	
+	always
+	begin
+		clk = ~clk;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module TrafficSignalControllerFND_tb();
+	reg clk, is_standby, is_test;
+	wire [2:0] out;
+	wire [6:0] FND3, FND2, FND1;
+	wire FND3Sel2, FND3Sel1;
+	wire FND2Sel2, FND2Sel1;
+	wire FND1Sel2, FND1Sel1;
+	
+	TrafficSignalControllerFND TrafficSignalControllerFND_1(clk, is_standby, is_test, FND3, FND2, FND1, FND3Sel2, FND3Sel1, FND2Sel2, FND2Sel1, FND1Sel2, FND1Sel1);
+	
+	initial
+	begin
+		clk = 1'b0;
+		is_standby = 1'b1; #250; // out = 3'b000
+		is_standby = 1'b0; // count를 어떻게 처리해야 할지 모르겠는데, 000, 001, 010, 011, 100, 001, 010, ... 순으로 바뀜.	
+	end
+	
+	always
+	begin
+		clk = ~clk;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module TrafficSignalController_tb();
+	reg clk, is_standby, is_test;
+	wire [2:0] out;
+	
+	TrafficSignalController TrafficSignalController_1(clk, is_standby, is_test, out);
+	
+	initial
+	begin
+		clk = 1'b0;
+		is_standby = 1'b1; #250; // out = 3'b000
+		is_standby = 1'b0; // count를 어떻게 처리해야 할지 모르겠는데, 000, 001, 010, 011, 100, 001, 010, ... 순으로 바뀜.
+	end
+	
+	always
+	begin
+		clk = ~clk;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module SequenceDetector_tb();
+	reg clk, reset, in;
+	wire out;
+	
+	SequenceDetector SequenceDetector_1(clk, reset, in, out);
+	
+	initial
+	begin
+		clk = 1'b0; reset = 1'b1; reset = 1'b0;
+		in = 1'b1; // state = 1, 2, 3, 3, 3, ...
+		in = 1'b0; // state = 0
+	end
+	
+	always
+	begin
+		clk = ~clk; #250;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module BCDCounter2digit_tb();
+	reg clk, reset;
+	wire [6:0] FND;
+	wire FNDSel2, FNDSel1;
+	
+	BCDCounter2digit BCDCounter2digit_1(clk, reset, FND, FNDSel2, FNDSel1);
+	
+	initial
+	begin
+		clk = 1'b0; reset = 1'b1; reset = 1'b0; // 두자리 FND에 대해서 값이 변화하는 것을 확인하면 됨.
+	end
+	
+	always
+	begin
+		clk = ~clk;	#250;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module AsymUpDownCounter_tb();
+	reg clk, x, reset;
+	wire [1:0] state;
+	
+	AsymUpDownCounter AsymUpDownCounter_1(clk, x, state, reset);
+	
+	initial
+	begin
+		clk = 1'b0;
+		x = 1'b0; // state = 1, 3, 0, 1, 3, 0, ...
+		reset = 1'b1; reset = 1'b0;
+		x = 1'b1; // state = 3, 2, 0, 3, 2, 0, ...
+	end
+	
+	always
+	begin
+		clk = ~clk; #250;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module Mod3Counter_tb();
+	reg clk;
+	wire [1:0] state;
+	
+	Mod3Counter Mod3Counter_1(clk, state);
+	
+	initial
+	begin
+		clk = 1'b0;
+		// state = 매 클럭마다 0, 1, 2, 3 순으로 바뀜;
+	end
+	
+	always
+	begin
+		clk = ~clk; #250;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module SyncBCDUpDownCounter_tb();
+	reg clk, reset, updown;
+	wire [3:0] count_out;
+	wire [6:0] FND;
+	wire FNDSel2, FNDSel1;
+	
+	SyncBCDUpDownCounter SyncBCDUpDownCounter_1(clk, reset, updown, count_out, FND, FNDSel2, FNDSel1);
+	
+	initial
+	begin
+		clk = 1'b0; reset = 1'b1; reset = 1'b0;
+		updown = 1'b0; // FND가 	250ns마다 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 순으로 바뀜
+		updown = 1'b1; // FND가 	250ns마다 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 순으로 바뀜
+	end
+	
+	always
+	begin
+		clk = ~clk; #250;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module UpDownCounter_tb();
+	reg clk, reset, updown;
+	reg [1:0] count_out;
+	reg [6:0] FND;
+	reg FNDSel2, FNDSel1;
+	
+	UpDownCounter UpDownCounter_1(clk, reset, updown, count_out, FND, FNDSel2, FNDSel1);
+	
+	initial
+	begin
+		clk = 1'b0; reset = 1'b1; reset = 1'b0;
+		updown = 1'b0; // FND가 	250ns마다 1, 2, 3, 0 순으로 바뀜
+		updown = 1'b1; // FND가 	250ns마다 3, 2, 1, 0 순으로 바뀜
+	end
+	
+	always
+	begin
+		clk = ~clk; #250;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module DLatch_tb();
+	reg a, en;
+	wire y;
+	
+	DLatch DLatch_1(a, en, y);
+	
+	initial
+	begin
+		en = 1'b1; a = 1'b0; // y = 0
+		en = 1'b1; a = 1'b1; // y = 1 
+		en = 1'b0; a = 1'b0; // y = 1
+		en = 1'b0; a = 1'b1; // y = 1
+	end
+endmodule
+
+`timescale 1ns/10ps
+module DFlipFlop_tb();
+	reg clk, d;
+	wire q;
+	
+	DFlipFlop DFlipFlop_1(clk, d, q);
+	
+	initial
+	begin
+		clk = 1'b0;
+		d = 1'b0; #250; // q = 0;
+		d = 1'b1; #250; // q = 1;
+	end
+	
+	always
+	begin
+		clk = ~clk;
+	end
+endmodule
+
+`timescale 1ns/10ps
+module SerialParallelConverter_tb();
+	parameter n = 8;
+	reg clk, load;
+	reg [n-1:0] p_in;
+	wire s_out;
+	
+	SerialParallelConverter SerialParallelConverter_1(clk, load, p_in, s_out);
+	
+	initial
+	begin
+		clk = 1'b0;
+		p_in = n'b10101010; load = 1'b0; load = 1'b1; load = 1'b0; // 매 클럭마다 1 0 1 0 1 0 1 0 출력
+	end
+	
+	always
+	begin
+		clk = ~clk; #250;
+	end
+endmodule
+
+`timescale 1ns/10ps
 module RegisterInference_tb();
 	reg clk, clr, pre, load, data, d;
 	wire q1, q2;
@@ -7,9 +337,13 @@ module RegisterInference_tb();
 	
 	initial
 	begin
-		clk = 1'b0; data = 1'b1; d = 1'b0; q1 = 1'b0;
-		clr = 1'b1; clr = 1'b0; #250;
-		pre = 1'b1; pre = 1'b0; #250;
+		clk = 1'b0;
+		clr = 1'b1; clr = 1'b0; #250; // q2 = 0
+		pre = 1'b1; pre = 1'b0; #250; // q2 = 1
+		data = 1'b0; load = 1'b0; load = 1'b1; #250; // q1 = 0
+		data = 1'b1; load = 1'b0; load = 1'b1; #250; // q1 = 1
+		d = 1'b0; load = 1'b0; #250; // q1 = 0;
+		d = 1'b1; load = 1'b0; #250; // q1 = 1;
 	end
 	
 	always

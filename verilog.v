@@ -1,6 +1,3 @@
-
-
-
 module WaveGenerator(Clk, I, R, W);
 	input Clk, I;
 	output R, W;
@@ -62,7 +59,7 @@ module WaveGenerator(Clk, I, R, W);
 endmodule
 
 
-module StateDiagram(clk, in, out);
+module StateDiagram_2(clk, in, out);
 	input clk;
 	input in;
 	output [1:0] out;
@@ -107,13 +104,14 @@ module StateDiagram(clk, in, out);
 endmodule
 
 
-module StateDiagram(clk, in, out);
+module StateDiagram_1(clk, in, out);
 	input clk;
 	input in;
 	output [1:0] out;
 
 	reg [1:0] out;
-	reg cur, next;
+	reg [1:0] cur;
+	reg [1:0] next;
 
 	parameter S0 = 2'b00;
 	parameter S1 = 2'b01;
@@ -121,6 +119,8 @@ module StateDiagram(clk, in, out);
 	parameter S3 = 2'b11;
 
 	assign cur = next;
+	
+	assign out = cur;
 
 	always @ (cur)
 	begin
@@ -396,7 +396,7 @@ module TrafficSignalController(clk, is_standby, is_test, out);
 				count <= count + 1;
 			end
 		end
-		else
+		else // ? ~is_test 와 is_test 가 동일하다?
 		begin
 			if(count >= time_normal[index])
 			begin
@@ -478,7 +478,7 @@ module BCDCounter2digit(clk, reset, FND, FNDSel2, FNDSel1);
 	wire clk_out[1:0];
 	wire [3:0] count_out_0, count_out_1;
 
-	SyncBCDUpDownCounter syncBCDUpDownCounter1(clk	   , reset, count_out_0, clk_out[0]);
+	SyncBCDUpDownCounter syncBCDUpDownCounter1(clk, reset, count_out_0, clk_out[0]);
 	SyncBCDUpDownCounter syncBCDUpDownCounter2(clk_out[0], reset, count_out_1, clk_out[1]);
 
 	always @ (count_out_0)
@@ -591,13 +591,19 @@ module SyncBCDUpDownCounter(clk, reset, count_out, clk_out);
 endmodule
 
 
-module AsymUpDownCounter(clk, x, state);
-	input clk, x;
+module AsymUpDownCounter(clk, x, state, reset);
+	input clk, x, reset;
 	output [1:0] state;
 
 	parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
 
 	reg [1:0] state = S0;
+	
+	always @ (negedge reset)
+	begin
+		if(~reset)
+			state = S0;
+	end
 
 	always @ (posedge clk)
 	begin
@@ -628,6 +634,11 @@ module Mod3Counter(clk, state);
 	parameter S2 = 2'b10;
 
 	reg state;
+	
+	initial
+	begin
+		state = 2'b00;
+	end
 
 	always @ (posedge clk)
 	begin
@@ -726,7 +737,7 @@ endmodule
 
 
 module UpDownCounter(clk, reset, updown, count_out, FND, FNDSel2, FNDSel1);
-	input clk, reset, updown;
+	input clk, reset, updown; // updown: 0 - up, 1 - down
 	output [1:0] count_out;
 	output [6:0] FND;
 	output FNDSel2, FNDSel1;
@@ -776,15 +787,15 @@ module UpDownCounter(clk, reset, updown, count_out, FND, FNDSel2, FNDSel1);
 endmodule
 
 
-module DLatch(a, enable, y);
-	input a, enable;
+module DLatch(a, en, y);
+	input a, en;
 	output y;
 
 	reg y;
 
 	always @ (a)
 	begin
-		if(enable)
+		if(en)
 		begin
 			y <= a;
 		end
@@ -833,8 +844,8 @@ module SerialParallelConverter(clk, load, p_in, s_out);
 	begin
 		if(~load)
 		begin
-			s_out <= reg1[n-1];
 			reg1 <= {reg1[n-2:0], 1'b0};
+			s_out <= reg1[n-1];
 		end
 	end
 endmodule
@@ -870,7 +881,7 @@ module RegisterInference(clk, clr, pre, data, d, q1, q2);
 		end
 		else
 		begin
-			q2 <= 2;
+			q2 <= 2; // ? - 여기에 대한 테스트 케이스는 작성하지 않았음.
 		end
 	end
 endmodule
