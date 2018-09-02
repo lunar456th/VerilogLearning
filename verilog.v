@@ -2114,26 +2114,28 @@ module Decoder3x8(x, D, en);
 	input [2:0] x;
 	input en; // enable signal
 	output [7:0] D;
+	
+	reg [7:0] D;
 
 	always @ (en or x)
 	begin
 		if(en) begin
 			case(x)
-				3'h0 : D = 8'h01;
-				3'h1 : D = 8'h02;
-				3'h2 : D = 8'h04;
-				3'h3 : D = 8'h08;
-				3'h4 : D = 8'h10;
-				3'h5 : D = 8'h20;
-				3'h6 : D = 8'h40;
-				3'h7 : D = 8'h80;
+				3'h0 : D <= 8'h01;
+				3'h1 : D <= 8'h02;
+				3'h2 : D <= 8'h04;
+				3'h3 : D <= 8'h08;
+				3'h4 : D <= 8'h10;
+				3'h5 : D <= 8'h20;
+				3'h6 : D <= 8'h40;
+				3'h7 : D <= 8'h80;
 			endcase
 		end
 	end
 endmodule
 
 
-module Fulladder3bit_2(x, y, z, S, C);
+module FullAdder3bit_2(x, y, z, S, C);
 	input x, y, z;
 	output S, C;
 
@@ -2141,7 +2143,7 @@ module Fulladder3bit_2(x, y, z, S, C);
 	assign C = (X & Y) | (Y & Z) | (Z & X);
 endmodule
 
-module Fulladder3bit(x, y, z, S, C);
+module FullAdder3bit(x, y, z, S, C);
 	input x, y, z;
 	output S, C;
 
@@ -2189,82 +2191,47 @@ module Fulladder3bit(x, y, z, S, C);
 	end
 endmodule
 
-module main_4(A, B, C, X, Y, Z)
-	initial
-	begin
-		$display("Hello, World");
+module main_4(A, B, C, X, Y, Z);
+	input A, B, C;
+	inout X, Y;
+	output Z;
 
-		input A, B, C;
-		inout X, Y;
-		output Z;
-
-		assign X = ~(A | B);
-		assign Y = ~(B | ~C);
-		assign Z = ~(X & Y);
-
-		$finish;
-	end
+	assign X = ~(A | B);
+	assign Y = ~(B | ~C);
+	assign Z = ~(X & Y);
 endmodule
 
-module main_3(A, B, C, F1, F2)
-	initial
-	begin
-		$display("Hello, World");
+module main_3(A, B, C, F1, F2);
+	input A, B, C;
+	output F1, F2;
 
-		input A, B, C;
-		output F1, F2;
-
-		assign F1 = A & B & C;
-		assign F2 = A&B | B&C | C&A;
-
-		$finish;
-	end
+	assign F1 = A & B & C;
+	assign F2 = A&B | B&C | C&A;
 endmodule
 
-module main_2(A, B, C, W, X, Y, Z)
-	initial
-	begin
-		$display("Hello, World");
+module main_2(A, B, C, W, X, Y, Z);
+	input A, B, C;
+	inout W, X, Y;
+	output Z;
 
-		input A, B, C;
-		inout W, X, Y;
-		output Z;
-
-		assign W = ~A & ~B & ~C;
-		assign X = A & ~B & ~C;
-		assign Y = ~A & ~B & C;
-		assign Z = (~A & ~B) | (~B & ~C);
-
-		$finish;
-	end
+	assign W = ~A & ~B & ~C;
+	assign X = A & ~B & ~C;
+	assign Y = ~A & ~B & C;
+	assign Z = (~A & ~B) | (~B & ~C);
 endmodule
 
 module main(a, b, and_out, or_out, not_out);
-	initial
-	begin
-		$display("Hello, World");
+	input a, b;
+	output and_out, or_out, not_out;
 
-		input a, b; // ¾È³çÇÏ¼¼¿ä
-		output and_out, or_out, not_out; // ¹Ý°©½À´Ï´Ù
-
-		assign and_out = a & b; // 
-		assign or_out = a | b;
-		assign not_out = ~a;
-
-		$finish;
-	end
+	assign and_out = a & b; // 
+	assign or_out = a | b;
+	assign not_out = ~a;
 endmodule
 
 module sub(a, b, c, d, y);
-	initial
-	begin
-		$display("Hello, World");
+	input a, b, c, d;
+	output y;
 
-		input a, b, c, d;
-		output y;
-
-		assign y = (~(a | b) & (c & d))
-
-		$finish;
-	end
+	assign y = (~(a | b) & (c & d));
 endmodule
